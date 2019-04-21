@@ -55,6 +55,7 @@ for(i in 1:length(sbt)) xy <- dplyr::left_join(xy, sbt[[i]], by = c('V1' = 'V1',
 colnames(xy)[3:(ncol(xy))] <- ys
 
 
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #                                 SPATIAL OBJECT
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -62,6 +63,35 @@ colnames(xy)[3:(ncol(xy))] <- ys
 sbt <- xy %>%
        st_as_sf(coords = c("V1", "V2"), crs = 4326) %>%
        st_transform(crs = 32198)
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#                                CHECK OUTLIERS
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Data in data.frame
+dat <- sbt[, ys, drop = T]
+
+# Visualize outliers
+graphicsutils::plot0(xlim = c(0,5), ylim = c(-20, 20))
+mtext('Outliers', 3, font = 2)
+for(i in 1:length(ys)) boxplot(dat[, i], add = T, at = i, frame = F, range = 3)
+axis(1, at = 1:length(ys), labels = ys)
+
+# Identify and modify outliers in the dataset
+for(i in 1:length(ys)) {
+  out <- boxplot.stats(dat[, i], coef = 3)$stat[c(1,5)]
+  cap <- quantile(dat[, i], probs=c(.05, .95), na.rm = T)
+  dat[, i][dat[, i] < out[1]] <- cap[1]
+  dat[, i][dat[, i] > out[2]] <- cap[2]
+}
+
+# Visualize outliers again
+graphicsutils::plot0(xlim = c(0,5), ylim = c(-20, 20))
+mtext('Outliers', 3, font = 2)
+for(i in 1:length(ys)) boxplot(dat[, i], add = T, at = i, frame = F, range = 3)
+axis(1, at = 1:length(ys), labels = ys)
+
+# Replace data in sf object
+sbt[, ys] <- dat
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
