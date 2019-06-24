@@ -52,9 +52,13 @@ negSBT <- negSBT[negSBT$NegativeSBT > 0, ]
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #                                  EXPORT DATA
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Change names for uniformity
+PositiveSBT <- posSBT
+NegativeSBT <- negSBT
+
 # Export object as .RData
-save(posSBT, file = './Data/Driver/PositiveSBT.RData')
-save(negSBT, file = './Data/Driver/NegativeSBT.RData')
+save(PositiveSBT, file = './Data/Driver/PositiveSBT.RData')
+save(NegativeSBT, file = './Data/Driver/NegativeSBT.RData')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
